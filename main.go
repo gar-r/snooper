@@ -4,6 +4,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/gin-gonic/gin"
 )
@@ -25,18 +26,20 @@ func main() {
 			ctx.Status(http.StatusInternalServerError)
 			return
 		}
-		defer os.Remove(file.Filename)
-		data, err := os.ReadFile(file.Filename)
-		if err != nil {
-			log.Println(err)
-			ctx.Status(http.StatusInternalServerError)
-			return
-		}
-		log.Println(string(data))
+		defer removeLater(file.Filename)
+		log.Println(file.Filename)
 		ctx.Status(http.StatusOK)
 	})
 
 	r.SetTrustedProxies(nil)
 	log.Fatal(r.Run(":8080"))
+}
 
+func removeLater(filename string) {
+	go func() {
+		timer := time.NewTimer(5 * time.Minute)
+		<-timer.C
+		timer.Stop()
+		os.Remove(filename)
+	}()
 }
