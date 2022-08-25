@@ -13,6 +13,8 @@ func main() {
 
 	r := gin.Default()
 
+	os.Mkdir("uploads", os.ModeDir)
+
 	r.POST("/", func(ctx *gin.Context) {
 		file, err := ctx.FormFile("upload")
 		if err != nil {
@@ -20,7 +22,7 @@ func main() {
 			ctx.Status(http.StatusBadRequest)
 			return
 		}
-		err = ctx.SaveUploadedFile(file, file.Filename)
+		err = ctx.SaveUploadedFile(file, "uploads/"+file.Filename)
 		if err != nil {
 			log.Println(err)
 			ctx.Status(http.StatusInternalServerError)
