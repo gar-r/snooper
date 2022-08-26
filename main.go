@@ -1,47 +1,35 @@
 package main
 
 import (
+	"fmt"
+	"github.com/gin-gonic/gin"
 	"log"
-	"net/http"
 	"os"
 	"time"
-
-	"github.com/gin-gonic/gin"
 )
+
+const uploadDir = "uploads"
+const cleanup = 5 * time.Minute
 
 func main() {
 
+	err := os.MkdirAll(uploadDir, 0755)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 	r := gin.Default()
+	r.GET("/:file", handleDownload)
+	r.POST("/", handleUpload)
 
-	os.Mkdir("uploads", os.ModeDir)
+	err = r.SetTrustedProxies(nil)
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	r.POST("/", func(ctx *gin.Context) {
-		file, err := ctx.FormFile("upload")
-		if err != nil {
-			log.Println(err)
-			ctx.Status(http.StatusBadRequest)
-			return
-		}
-		err = ctx.SaveUploadedFile(file, "uploads/"+file.Filename)
-		if err != nil {
-			log.Println(err)
-			ctx.Status(http.StatusInternalServerError)
-			return
-		}
-		defer removeLater(file.Filename)
-		log.Println(file.Filename)
-		ctx.Status(http.StatusOK)
-	})
-
-	r.SetTrustedProxies(nil)
 	log.Fatal(r.Run(":8080"))
 }
 
-func removeLater(filename string) {
-	go func() {
-		timer := time.NewTimer(5 * time.Minute)
-		<-timer.C
-		timer.Stop()
-		os.Remove(filename)
-	}()
+func path(name string) string {
+	return fmt.Sprintf("%s/%s", uploadDir, name)
 }

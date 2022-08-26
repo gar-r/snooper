@@ -11,6 +11,14 @@ docker run -d -p 8080:8080 -e GIN_MODE=release --restart always -v $(pwd)/snoope
 
 ## Using the service
 
+POST a file:
+
 ```
-curl -F upload=@/path/to/local/file http://localhost:8080/
+curl -F upload=@local-file http://localhost:8080/
+```
+
+GET the uploaded file:
+
+```
+curl http://localhost:8080/local-file
 ```
