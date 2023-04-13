@@ -2,14 +2,15 @@ package main
 
 import (
 	"fmt"
-	"github.com/gin-gonic/gin"
 	"log"
 	"os"
 	"time"
+
+	"github.com/gin-gonic/gin"
 )
 
 const uploadDir = "uploads"
-const cleanup = 5 * time.Minute
+const cleanup = 6 * time.Hour
 
 func main() {
 
