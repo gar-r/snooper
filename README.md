@@ -22,3 +22,9 @@ GET the uploaded file:
 ```
 curl http://localhost:8080/local-file
 ```
+
+...or download the attachment as a local file:
+
+```
+curl -O -J http://localhost:8080/local-file
+```
