@@ -6,7 +6,7 @@ Logs the content of an uploaded file.
 
 ```
 docker build -t snooper .
-docker run -d -p 8080:8080 -e GIN_MODE=release --restart always -v $(pwd)/snooper-data:/uploads --name snooper snooper
+docker run -d -p 8080:8080 -e GIN_MODE=release --restart always -v $(pwd)/snooper-data:/snooper/uploads --name snooper snooper
 ```
 
 ## Using the service
